@@ -6,8 +6,23 @@ export default function Pagination({
   selectedCohort,
 }) {
   const [currentPage, setCurrentPage] = useState(1);
+  const [showUpTo, setShowUpTo] = useState(5);
   const resultsPerPage = 10;
   const numOfPages = Math.ceil(students.length / resultsPerPage);
+  // 10  =>  5 to 10  =>    10-5 , 10
+  function showFiveAtATime() {
+    Array.from({ length: 5 }, (n, i) => showUpTo - 5 + i).map((n, i) => (
+      <button
+        onClick={() => setCurrentPage(n)}
+        key={i}
+        className={n === currentPage ? "current-page" : ""}
+      ></button>
+    ));
+  }
+  //   useEffect(() => {
+
+  //     showFiveAtATime()
+  //   }, [showUpTo]);
 
   // if different cohort is selected reset current page
   useEffect(() => {
@@ -42,6 +57,14 @@ export default function Pagination({
 
   return (
     <div className="pagination">
+      {numOfPages > 5 && (
+        <button
+          onClick={() => setShowUpTo(showUpTo - 5 > 5 ? showUpTo - 5 : 5)}
+        >
+          &lt;
+        </button>
+      )}
+
       <button
         className="prev"
         id="prev"
@@ -50,7 +73,22 @@ export default function Pagination({
       >
         Prev
       </button>
-      {Array.from({ length: numOfPages }, (_, i) => i + 1).map((n, i) => (
+      {/* {Array.from({ length: numOfPages }, (_, i) => i + 1).map((n, i) => (
+        <button
+          onClick={() => setCurrentPage(n)}
+          key={i}
+          className={n === currentPage ? "current-page" : ""}
+        >
+          {n}
+        </button>
+      ))} */}
+
+      {/* only show 5 pagination buttons at a time, if num of pages is over 5  */}
+
+      {Array.from(
+        { length: numOfPages > 5 ? 5 : numOfPages },
+        (n, i) => showUpTo - 5 + i + 1
+      ).map((n, i) => (
         <button
           onClick={() => setCurrentPage(n)}
           key={i}
@@ -67,6 +105,9 @@ export default function Pagination({
       >
         Next
       </button>
+      {numOfPages > 5 && (
+        <button onClick={() => setShowUpTo(showUpTo + 5)}>&gt;</button>
+      )}
     </div>
   );
 }
